@@ -1,0 +1,54 @@
+
+## Problems
+Find the minimum value of $rac{9x^2\sin^2 x + 4}{x\sin x}$ for $0 < x < \pi$. Show that it is 12.
+
+## Informal proof
+Let $y = x \sin x$. It suffices to show that $12 \leq rac{9y^2 + 4}{y}. It is trivial to see that $y > 0$. Then one can multiply both sides by $y$ and it suffices to show $12y \leq 9y^2 + 4$. This can be done by the sum of squares method.
+
+## Formal statement
+```isabelle
+theorem
+  fixes x::real
+  assumes "0<x" "x<pi"
+  shows "12 \<le> ((9 * (x^2 * (sin x)^2)) + 4) / (x * sin x)"
+
+    and "\<forall>y>0. ((9 * y^2) + 4) / y \<ge> 12"
+```
+
+## Structured informal proof
+Step 1: Recognize that $x \sin x$ is positive in the given domain (0, $\pi$).
+Step 2: Let $y = x \sin x$. Our goal is to show $12 \leq \frac{9y^2 + 4}{y}$.
+Step 3: Multiply both sides by $y$ (which is positive) to get $12y \leq 9y^2 + 4$.
+Step 4: Use the sum of squares technique to prove the inequality $12y \leq 9y^2 + 4$.
+Step 5: Conclude that $12 \leq \frac{9y^2 + 4}{y}$ and hence $12$ is a lower bound for the given expression.
+Step 6: Show that the minimum value of the expression is attained at $x = \frac{\pi}{2}$ and it equals 12.
+
+## Request skills
+### Thoughts 1
+The proof requires skills in working with inequalities, using the sum of squares technique, and finding the minimum value of a rational function.
+
+### Code 1
+```isabelle
+lemma sum_of_squares:
+  fixes y :: real
+  assumes "y > 0"
+  shows "12 * y \<le> 9 * y^2 + 4"
+```
+
+### Thoughts 2
+To find the minimum value, we need to analyze the critical points of the rational function and check the boundary values.
+
+### Code 2
+```isabelle
+lemma minimum_value_rational_function:
+  fixes x :: real
+  assumes "0 < x" "x < pi" 
+  shows "12 \<le> ((9 * (x^2 * (sin x)^2)) + 4) / (x * sin x)"
+    and "((9 * ((\<pi>/2)^2 * (sin (\<pi>/2))^2)) + 4) / ((\<pi>/2) * sin (\<pi>/2)) = 12"
+```
+
+The key lemmas required are:
+1. sum_of_squares: To prove the inequality $12y \leq 9y^2 + 4$ using the sum of squares method.
+2. minimum_value_rational_function: To analyze the critical points and boundary values of the rational function to find its minimum value.
+
+Additionally, knowledge of calculus and techniques for finding extrema of functions would be helpful.

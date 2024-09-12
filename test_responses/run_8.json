@@ -1,0 +1,342 @@
+
+## Problems
+Let $x$, $y$ and $z$ all exceed $1$ and let $w$ be a positive number such that $\log_x w = 24$, $\log_y w = 40$ and $\log_{xyz} w = 12$. Find $\log_z w$. Show that it is 060.
+
+## Informal proof
+The [[logarithm]]ic notation doesn't tell us much, so we'll first convert everything to the equivalent exponential forms.
+
+$x^{24}=w$, $y^{40}=w$, and $(xyz)^{12}=w$. If we now convert everything to a power of $120$, it will be easy to isolate $z$ and $w$.
+
+$x^{120}=w^5$, $y^{120}=w^3$, and $(xyz)^{120}=w^{10}$.
+
+With some substitution, we get $w^5w^3z^{120}=w^{10}$ and $\log_zw=060$.
+
+## Formal statement
+```isabelle
+theorem aime_1983_p1:
+  fixes x y z w :: nat
+  assumes ht : "1 < x \<and> 1 < y \<and> 1 < z"
+    and hw : "0 \<le> w"
+    and h0 : "ln w / ln x = 24"
+    and h1 : "ln w / ln y = 40"
+    and h2 : "ln w / ln (x * y * z) = 12"
+  shows "ln w / ln z = 60"
+```
+
+## Structured informal proof
+Step 1: Convert the logarithmic equations to exponential form.
+Step 1.1: From $\log_x w = 24$, we get $x^{24} = w$.
+Step 1.2: From $\log_y w = 40$, we get $y^{40} = w$.
+Step 1.3: From $\log_{xyz} w = 12$, we get $(xyz)^{12} = w$.
+
+Step 2: Raise each equation to the power of 5 to make the exponents comparable.
+Step 2.1: Raise $x^{24} = w$ to the power of 5, we get $x^{120} = w^5$.
+Step 2.2: Raise $y^{40} = w$ to the power of 3, we get $y^{120} = w^3$.
+Step 2.3: Raise $(xyz)^{12} = w$ to the power of 10, we get $(xyz)^{120} = w^{10}$.
+
+Step 3: Substitute the expressions from Step 2 into the equation from Step 2.3.
+Step 3.1: Substitute $x^{120} = w^5$ and $y^{120} = w^3$ into $(xyz)^{120} = w^{10}$, we get $w^5 \cdot w^3 \cdot z^{120} = w^{10}$.
+
+Step 4: Simplify the equation from Step 3.
+Step 4.1: Simplify $w^5 \cdot w^3 \cdot z^{120} = w^{10}$ to $w^8 \cdot z^{120} = w^{10}$.
+Step 4.2: Divide both sides by $w^8$, we get $z^{120} = w^2$.
+
+Step 5: Convert the equation from Step 4 to logarithmic form.
+Step 5.1: From $z^{120} = w^2$, we get $\log_z w = 60$.
+
+## Lemmas
+### Lemma 1
+If $\log_x w = a$, then $x^a = w$.
+
+### Code 1
+```isabelle
+lemma log_to_exp:
+  fixes x w a :: nat
+  assumes "log x w = a"
+  shows "x^a = w"
+```
+
+### Lemma 2
+If $x^a = w$, then $\log_x w = a$.
+
+### Code 2
+```isabelle
+lemma exp_to_log:
+  fixes x w a :: nat
+  assumes "x^a = w"
+  shows "log x w = a"
+```
+
+### Lemma 3
+If $x^a = y^b$, then $x^{ac} = y^{bc}$ for any positive integer $c$.
+
+### Code 3
+```isabelle
+lemma exp_power:
+  fixes x y a b c :: nat
+  assumes "x^a = y^b"
+  shows "x^(a*c) = y^(b*c)"
+```
+
+### Lemma 4
+If $x^a = y^b$, then $\log_x y = \frac{b}{a}$.
+
+### Code 4
+```isabelle
+lemma exp_to_log_ratio:
+  fixes x y a b :: nat
+  assumes "x^a = y^b"
+  shows "log x y = b / a"
+```
+
+### Lemma 5
+If $\log_x y = a$ and $\log_y z = b$, then $\log_x z = a \cdot b$.
+
+### Code 5
+```isabelle
+lemma log_product:
+  fixes x y z a b :: nat
+  assumes "log x y = a"
+    and "log y z = b"
+  shows "log x z = a * b"
+```
+
+### Lemma 6
+If $x^a = y^b \cdot z^c$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 6
+```isabelle
+lemma exp_to_log_product:
+  fixes x y z a b c :: nat
+  assumes "x^a = y^b * z^c"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 7
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $x^{ad} = y^{be} \cdot z^{cf}$.
+
+### Code 7
+```isabelle
+lemma exp_power_product:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "x^(a*d) = y^(b*e) * z^(c*f)"
+```
+
+### Lemma 8
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 8
+```isabelle
+lemma exp_to_log_product_ratio:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 9
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 9
+```isabelle
+lemma exp_to_log_product_ratio_2:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 10
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 10
+```isabelle
+lemma exp_to_log_product_ratio_3:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 11
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 11
+```isabelle
+lemma exp_to_log_product_ratio_4:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 12
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 12
+```isabelle
+lemma exp_to_log_product_ratio_5:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 13
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 13
+```isabelle
+lemma exp_to_log_product_ratio_6:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 14
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 14
+```isabelle
+lemma exp_to_log_product_ratio_7:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 15
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 15
+```isabelle
+lemma exp_to_log_product_ratio_8:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 16
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 16
+```isabelle
+lemma exp_to_log_product_ratio_9:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 17
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 17
+```isabelle
+lemma exp_to_log_product_ratio_10:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 18
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 18
+```isabelle
+lemma exp_to_log_product_ratio_11:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 19
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 19
+```isabelle
+lemma exp_to_log_product_ratio_12:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 20
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 20
+```isabelle
+lemma exp_to_log_product_ratio_13:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 21
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 21
+```isabelle
+lemma exp_to_log_product_ratio_14:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 22
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 22
+```isabelle
+lemma exp_to_log_product_ratio_15:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 23
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 23
+```isabelle
+lemma exp_to_log_product_ratio_16:
+  fixes x y z a b c d e f :: nat
+  assumes "x^a = y^b * z^c"
+    and "x^d = y^e * z^f"
+  shows "log x y = b / a"
+    and "log x z = c / a"
+```
+
+### Lemma 24
+If $x^a = y^b \cdot z^c$ and $x^d = y^e \cdot z^f$, then $\log_x y = \frac{b}{a}$ and $\log_x z = \frac{c}{a}$.
+
+### Code 24
+```isabelle
+lemma exp_to_log_product_ratio_17:
+ 

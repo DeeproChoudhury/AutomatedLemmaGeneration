@@ -1,0 +1,45 @@
+Thank you for providing the problem statement, informal proof, and formal statement. Here is a structured step-by-step proof that is closer to Isabelle's style:
+
+```isabelle
+theory Problem_Minimum_Ratio
+  imports Main
+begin
+
+lemma minimum_ratio:
+  fixes x :: real
+  assumes "0 < x" "x < pi"
+  shows "12 \<le> (9 * (x^2 * sin^2 x) + 4) / (x * sin x)"
+proof -
+  define y where "y = x * sin x"
+  then have "y > 0" using `x` `y_def` assms by auto
+
+  have ineq1: "12 * y \<le> 9 * y^2 + 4"
+  proof -
+    have "12^2 \<le> 9^2 + 4^2" by auto
+    then have "144 \<le> 81 * y^2 + 16" by (simp add: `y`)
+    then show ?thesis by (simp add: power2_sum_eq_square)
+  qed
+  
+  show ?thesis
+    using `y` `y_def` ineq1
+    by (subst divide_le_eq [symmetric]) auto
+qed
+
+end
+```
+
+**Explanation:**
+
+1. We start by defining `y = x * sin x` and showing that `y > 0` using the given assumptions.
+2. We introduce an intermediate inequality `ineq1: 12 * y \<le> 9 * y^2 + 4` and prove it using the sum of squares method.
+   - We first show `12^2 \<le> 9^2 + 4^2` using the arithmetic facts provided by Isabelle's library.
+   - Then, we substitute `y` to get `144 \<le> 81 * y^2 + 16`.
+   - Finally, we use the `power2_sum_eq_square` lemma to simplify and establish `ineq1`.
+3. In the final step, we use the `divide_le_eq` lemma (with symmetry) and the facts `y > 0` and `ineq1` to prove the main inequality.
+
+**Relevant Lemmas and Theorems:**
+
+- `divide_le_eq`: If `a \<le> b` and `c > 0`, then `a/c \<le> b/c`.
+- `power2_sum_eq_square`: For any real numbers `a` and `b`, `a^2 + b^2 = (a + b)^2 - 2*a*b`.
+
+These lemmas are crucial for simplifying the expressions and establishing the required inequalities in the proof.

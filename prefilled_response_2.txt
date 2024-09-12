@@ -1,0 +1,54 @@
+
+## Problems
+Find the minimum value of $rac{9x^2\sin^2 x + 4}{x\sin x}$ for $0 < x < \pi$. Show that it is 12.
+
+## Informal proof
+Let $y = x \sin x$. It suffices to show that $12 \leq rac{9y^2 + 4}{y}. It is trivial to see that $y > 0$. Then one can multiply both sides by $y$ and it suffices to show $12y \leq 9y^2 + 4$. This can be done by the sum of squares method.
+
+## Formal statement
+```isabelle
+theorem
+  fixes x::real
+  assumes "0<x" "x<pi"
+  shows "12 \<le> ((9 * (x^2 * (sin x)^2)) + 4) / (x * sin x)"
+
+
+```
+
+## Structured informal proof
+Step 1: Let y = x * sin(x) and note that y > 0 for 0 < x < pi.
+Step 2: Multiply both sides of the target inequality by y to yield 12y <= 9y^2 + 4.
+Step 3: Use the sum of squares method to prove 12y <= 9y^2 + 4.
+
+## Request skills
+### Thoughts 1
+The key steps are introducing the new variable y, and using the sum of squares technique.
+
+### Code 1 
+```isabelle
+lemma sum_of_squares:
+  fixes a b c :: real
+  assumes "c \<ge> 0"
+  shows "4 * c \<le> (a + b)^2 + (a - b)^2"
+  using assms by (simp add: power2_sum_eq)  
+```
+
+### Thoughts 2
+We will also need to prove that x * sin x > 0 in the given range.
+
+### Code 2
+```isabelle  
+lemma xsinx_pos:
+  fixes x::real    
+  assumes "0 < x" "x < pi"
+  shows "x * sin x > 0"
+  using assms by (auto simp add: mult_pos_pos sin_pos_lt_pi)
+```
+
+The key steps in the structured proof are:
+
+1. Introduce the new variable y = x * sin x and show y > 0 in the given range using xsinx_pos.
+2. Multiply both sides of the target inequality by y to get 12y <= 9y^2 + 4. 
+3. Use sum_of_squares with a = 3y and b = 2 to prove 12y <= 9y^2 + 4.
+
+This breaks down the problem into smaller lemmas that can be proved separately in Isabelle. Let me know if you need any clarification or have additional requests!

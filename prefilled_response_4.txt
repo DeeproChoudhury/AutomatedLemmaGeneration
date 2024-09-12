@@ -1,0 +1,58 @@
+
+## Problems
+Find the minimum value of $rac{9x^2\sin^2 x + 4}{x\sin x}$ for $0 < x < \pi$. Show that it is 12.
+
+## Informal proof
+Let $y = x \sin x$. It suffices to show that $12 \leq rac{9y^2 + 4}{y}. It is trivial to see that $y > 0$. Then one can multiply both sides by $y$ and it suffices to show $12y \leq 9y^2 + 4$. This can be done by the sum of squares method.
+
+## Formal statement
+```isabelle
+theorem
+  fixes x::real
+  assumes "0<x" "x<pi"
+  shows "12 \<le> ((9 * (x^2 * (sin x)^2)) + 4) / (x * sin x)"
+```
+
+
+## Structured informal proof
+Step 1: Define a new variable $y = x \sin x$.
+Step 2: Prove that $y > 0$ using the given assumptions.
+Step 3: Multiply both sides of the inequality by $y$ to get $12y \leq 9y^2 + 4$.
+Step 4: Use the sum of squares method to prove $12y \leq 9y^2 + 4$.
+Step 5: Substitute $y$ back with $x \sin x$ to prove the original inequality.
+
+## Request skills
+### Thoughts 1
+The ability to manipulate algebraic expressions, particularly involving trigonometric functions, is essential for this proof.
+
+### Code 1
+```isabelle
+lemma y_positive:
+  fixes x :: real
+  assumes "0 < x" "x < pi"
+  shows "x * sin x > 0"
+```
+
+### Thoughts 2
+Understanding the concept of the sum of squares and its applications in proving inequalities is crucial.
+
+### Code 2
+```isabelle
+lemma sum_of_squares:
+  fixes a b c :: real
+  assumes "c \<ge> 0"
+  shows "(a + b)^2 \<ge> a^2 + b^2 + 2 * c"
+```
+
+### Thoughts 3
+Familiarity with algebraic manipulation techniques, such as multiplying both sides by a non-zero variable, is also required.
+
+### Code 3
+```isabelle
+lemma multiply_inequality_nonzero:
+  fixes a b c :: real
+  assumes "c \<noteq> 0"
+  shows "(a \<le> b) = (c * a \<le> c * b)"
+```
+
+By combining these skills and lemmas, the proof can be constructed rigorously in Isabelle.

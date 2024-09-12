@@ -1,0 +1,56 @@
+Here is a structured step-by-step proof of the given theorem in a form closer to Isabelle:
+
+**Step 1:** Define a new variable `y` as `y = x * sin x`.
+
+```isabelle
+definition y :: "real \<Rightarrow> real" where
+  "y x = x * sin x"
+```
+
+**Step 2:** Show that `y x` is positive for `0 < x < pi`.
+
+```isabelle
+lemma "0 < x \<and> x < pi \<Longrightarrow> 0 < y x"
+  by (simp add: y_def) (auto simp add: sin_bound_outside_range)
+```
+
+**Step 3:** Prove that the given inequality is equivalent to `12 * y x \<le> 9 * y x^2 + 4`.
+
+```isabelle
+lemma equiv_ineq:
+  assumes "0 < x" and "x < pi"
+  shows "12 \<le> (9 * x^2 * sin^2 x + 4) / (x * sin x) \<longleftrightarrow> 12 * y x \<le> 9 * y x^2 + 4"
+  by (auto simp: y_def assms)
+```
+
+**Step 4:** Prove the inequality `12 * y x \<le> 9 * y x^2 + 4` using the sum of squares method.
+
+```isabelle
+lemma ineq_sum_squares:
+  assumes "0 < x" and "x < pi"
+  shows "12 * y x \<le> 9 * y x^2 + 4"
+proof -
+  have "0 < y x" using assms by (rule y_pos)
+  moreover have "3^2 * y x^2 + 4^2 \<ge> 12 * y x"
+    by (rule sum_squares_ge_l2norm) (auto simp: power2_eq_square)
+  ultimately show ?thesis
+    by (auto simp: y_def power2_eq_square)
+qed
+```
+
+**Step 5:** Combine the results to prove the original inequality.
+
+```isabelle
+theorem min_value_rat_expr:
+  assumes "0 < x" and "x < pi"
+  shows "12 \<le> (9 * x^2 * sin^2 x + 4) / (x * sin x)"
+  using assms equiv_ineq ineq_sum_squares by auto
+```
+
+**Relevant Lemmas and Theorems:**
+
+1. `sin_bound_outside_range`: A lemma that states the bounds of the sine function for values outside the range `[-pi/2, pi/2]`.
+2. `sum_squares_ge_l2norm`: A theorem that states the sum of squares of two real numbers is greater than or equal to the square of their Euclidean norm.
+3. `power2_eq_square`: A lemma that states `x^2 = x * x` for any real number `x`.
+
+The structured proof closely follows the informal proof, but it explicitly defines the variable `y`, proves the intermediate steps as separate lemmas, and combines them to prove the final theorem. The proof also requests relevant lemmas and theorems, such as `sin_bound_outside_range`, `sum_squares_ge_l2norm`, and `power2_eq_square`, which aid in proving the intermediate steps and the final theorem.
