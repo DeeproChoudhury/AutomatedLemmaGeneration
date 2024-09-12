@@ -16,7 +16,7 @@ import logging
 
 class Sketcher:
 
-    def __init__(self, example_path: str = "data/paper_prompt_examples", directory: str = "data/sketches", logger=None):
+    def __init__(self, example_path: str = "data/paper_prompt_examples", directory: str = "data/sketches", logger=None, type="mistral"):
     
         self.example_path = example_path
         self.directory = directory
@@ -54,6 +54,7 @@ Formal:
         )
 
         self.logger = logger
+        self.type=type
 
     def load_examples(self) -> Dict[str, str]:
         examples = {}
@@ -94,14 +95,15 @@ Formal:
         
         return combined_content
     
-    def create_formal_sketch(self, informal_statement: str, informal_proof: str, formal_statement: str):
+    def create_formal_sketch(self, informal_statement: str, informal_proof: str, formal_statement: str, model="mistral-large"):
 
         
         llm = LLMMixture(
-            model_name="gpt-3.5-turbo",
+            model_name=model,
             temperature=0.0,
             request_timeout=120,
-            logger=self.logger
+            logger=self.logger,
+            type=self.type
         )
 
         messages = self.create_message_pair(
@@ -113,7 +115,7 @@ Formal:
         response = llm.query(
             langchain_msgs=messages,
             temperature=0.0,
-            max_tokens=4000
+            max_tokens=2048
         )
 
         return response

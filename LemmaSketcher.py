@@ -17,6 +17,7 @@ class LemmaSketcher:
         directory: str = "data/sketches",
         lemma_store: Dict[str, str] = {},
         logger=None,
+        type="mistral"
     ):
 
         self.example_path = example_path
@@ -57,6 +58,7 @@ Here are some examples which you should follow to write your proof:
 
         self.logger = logger
         self.lemma_store = lemma_store
+        self.type = type
 
 
     def load_examples(self) -> Dict[str, str]:
@@ -188,6 +190,7 @@ Here are some examples which you should follow to write your proof:
             temperature=0.0,
             request_timeout=120,
             logger=self.logger,
+            type=self.type,
         )
 
         messages = self.create_message_pair(

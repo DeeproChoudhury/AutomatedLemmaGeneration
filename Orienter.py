@@ -9,13 +9,15 @@ from langchain_utils import LLMMixture
 
 class Orienter:
 
-    def __init__(self, model):
+    def __init__(self, model, type="mistral"):
         self.model = model
+
+        self.type = type
 
         self.system_prompt = """
 As a mathematician and expert in the isabelle theorem prover, your task is to analyze the given theorem (including problem's informal statement, 
 human written informal proof, and formal statement). Provide a better structured step by step proof that closer to isabelle. 
-and request relevant lemmas, theorems that might help in proving this problem.
+and request relevant lemmas, theorems that might help in proving this problem. If the problem does not require any helper lemmas, then do not generate any.
 """
 
         self.human_prompt = """
@@ -27,7 +29,8 @@ Here are some examples.
 """
 
         self.prefilled = """
-## Problems
+Here is the actual problem. Create a structured proof and lemmas for this problem statement, taking inspiration from the previous examples.
+## Problem
 {informal_statement}
 
 ## Informal proof
@@ -79,6 +82,7 @@ Here are some examples.
             model_name=self.model,
             temperature=temperature,
             request_timeout=60,
+            type=self.type,
         )
 
         response = llm.query(

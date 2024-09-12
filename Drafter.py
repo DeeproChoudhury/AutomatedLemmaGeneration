@@ -85,11 +85,12 @@ and should be detailed and clear. Justify each step, including the minor ones, t
         # # with open(filename, 'w') as f:
         # #     f.write(response_body.get('content')[0]['text'])
 
-    def write_proof_openai(self, informal_statement, formal_statement):
+    def write_proof_openai(self, informal_statement, formal_statement, type="openai"):
         llm = LLMMixture(
             model_name=self.model,
             temperature=0.7,
             request_timeout=60,
+            type=type,
         )
 
         system_message = SystemMessage(content=self.system_prompt)
