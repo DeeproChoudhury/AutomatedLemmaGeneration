@@ -28,11 +28,11 @@ class Prover:
     def is_port_in_use(self, host, port):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             try:
-                sock.settimeout(1)  # Set a timeout for connection attempt
+                sock.settimeout(1)
                 sock.connect((host, port))
-                return True  # Connection successful, server is running
+                return True
             except (socket.timeout, ConnectionRefusedError):
-                return False  # Could not connect, server might not be running
+                return False
 
     def check_proof(self, proof: str) -> bool:
         print(self.is_port_in_use(host="127.0.0.1", port=8000))
