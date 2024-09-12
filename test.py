@@ -340,6 +340,20 @@ def thoughts_queue_3(informal_statement, informal_proof, formal_statement, model
         sketcher_logger.info(verification_result['theorem_and_proof'])
 
     return final_sketch, verified_lemmas, verification_result['success']
+    # Verify the final sketch
+    verification_result = prover.check_proof(final_sketch)
+    if verification_result['success']:
+        print("##### FINAL PROOF SKETCH VERIFIED SUCCESSFULLY #####")
+        sketcher_logger.info("\n##### FINAL PROOF SKETCH VERIFIED SUCCESSFULLY #####\n")
+    else:
+        print("##### FINAL PROOF SKETCH VERIFICATION FAILED #####")
+        sketcher_logger.info("\n##### FINAL PROOF SKETCH VERIFICATION FAILED #####\n")
+        print("Prover output:")
+        print(verification_result['theorem_and_proof'])
+        sketcher_logger.info("Prover output:")
+        sketcher_logger.info(verification_result['theorem_and_proof'])
+
+    return final_sketch, verified_lemmas, verification_result['success']
 
 def combine_proofs(proof_hierarchy):
     def recursive_combine(proof_id):
