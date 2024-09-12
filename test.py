@@ -239,7 +239,20 @@ def thoughts_queue_2(informal_statement, informal_proof, formal_statement, model
     sketcher_logger.info("\n##### FINAL PROOF SKETCH #####\n")
     sketcher_logger.info(final_sketch)
 
-    return final_sketch, verified_lemmas
+    # Verify the final sketch
+    verification_result = prover.check_proof(final_sketch)
+    if verification_result['success']:
+        print("##### FINAL PROOF SKETCH VERIFIED SUCCESSFULLY #####")
+        sketcher_logger.info("\n##### FINAL PROOF SKETCH VERIFIED SUCCESSFULLY #####\n")
+    else:
+        print("##### FINAL PROOF SKETCH VERIFICATION FAILED #####")
+        sketcher_logger.info("\n##### FINAL PROOF SKETCH VERIFICATION FAILED #####\n")
+        print("Prover output:")
+        print(verification_result['theorem_and_proof'])
+        sketcher_logger.info("Prover output:")
+        sketcher_logger.info(verification_result['theorem_and_proof'])
+
+    return final_sketch, verified_lemmas, verification_result['success']
 
 def combine_proofs(proof_hierarchy):
     def recursive_combine(proof_id):
@@ -305,7 +318,7 @@ def test_thoughts_queue_2():
     logger.info(f"Informal proof: {informal_proof}")
     logger.info(f"Formal statement: {formal_statement}")
 
-    final_sketch, verified_lemmas = thoughts_queue_2(informal_statement, informal_proof, formal_statement)
+    final_sketch, verified_lemmas, is_verified = thoughts_queue_2(informal_statement, informal_proof, formal_statement)
 
     logger.info("Test completed")
     logger.info("Final sketch:")
@@ -315,6 +328,7 @@ def test_thoughts_queue_2():
         logger.info(f"Lemma {lemma_id}:")
         logger.info(f"  Informal: {lemma_data['informal'][:100]}...")
         logger.info(f"  Formal: {lemma_data['formal'][:100]}...")
+    logger.info(f"Final sketch verified: {is_verified}")
 
 if __name__ == "__main__":
     informal_statement = "Find the minimum value of $\frac{9x^2\sin^2 x + 4}{x\sin x}$ for $0 < x < \pi$. Show that it is 12."
@@ -326,7 +340,7 @@ if __name__ == "__main__":
 
     orienter = Orienter(model="gpt-3.5-turbo")
 
-    thoughts_queue(informal_statement, informal_proof, formal_statement)
+    thoughts_queue_2(informal_statement, informal_proof, formal_statement, model="mistral-large")
 
     # response = orienter.orient(informal_statement, informal_proof, formal_statement, temperature=0)
 
