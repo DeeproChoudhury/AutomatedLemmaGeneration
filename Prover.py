@@ -35,7 +35,7 @@ class Prover:
                 return False
 
     def check_proof(self, proof: str) -> bool:
-        print(self.is_port_in_use(host="127.0.0.1", port=8000))
+        # print(self.is_port_in_use(host="127.0.0.1", port=8000))
         return self.checker.check(proof)
 
 

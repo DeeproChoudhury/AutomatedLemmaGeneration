@@ -21,7 +21,7 @@ ensure that you do not use techniques which are too complicated for isabelle to 
 """
 
         self.user_prompt = """
-Compose a concise proof for the following problem. This proof should be written in natural language,
+Compose a concise paragraph-long proof for the following problem. This proof should be written in natural language,
 and should be detailed and clear. Justify each step, including the minor ones, thoroughly.
 """
 
